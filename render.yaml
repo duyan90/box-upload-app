@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: box-upload-backend
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: npm install && npm run build:backend
+    startCommand: node dist/backend/main.js
+    healthCheckPath: /api
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: BOX_CLIENT_ID
+        sync: false
+      - key: BOX_CLIENT_SECRET
+        sync: false
+      - key: BOX_REDIRECT_URI
+        sync: false
+      - key: BOX_FOLDER_ID
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: FRONTEND_LOGIN_URL
+        sync: false
+      - key: FRONTEND_DASHBOARD_URL
+        sync: false
+

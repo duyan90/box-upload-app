@@ -5,6 +5,24 @@ Angular + NestJS fullstack app for uploading files to Box.com with OAuth authent
 > 🚀 **First time?** See [QUICK-START.md](./QUICK-START.md) - Setup in 5 minutes!
 > 📚 **All docs:** See [DOCS.md](./DOCS.md)
 
+---
+
+## 📸 Screenshots
+
+### Login Page
+![Login Page](docs/screenshots/01-login.png)
+
+### Dashboard
+![Dashboard](docs/screenshots/02-dashboard.png)
+
+### File Upload with Progress
+![Upload Progress](docs/screenshots/03-upload-progress.png)
+
+### File List Table
+![File List](docs/screenshots/04-file-list.png)
+
+---
+
 ## 🚀 Project Structure
 
 ```

@@ -11,16 +11,15 @@ export const environment = {
   // API Configuration
   api: {
     baseUrl: '/api', // Proxied by Vercel to backend
-    backendUrl: 'https://your-railway-app.railway.app' // Update with your Railway URL
+    backendUrl: 'https://box-upload-backend.onrender.com'
   },
   
   // Box OAuth Configuration
-  // ⚠️  UPDATE backendUrl and redirectUri with your Railway URL before deploying!
   box: {
-    clientId: 'f00lrhivgoesvo122aejdy7lrzuw0mka', // Public - same as dev
+    clientId: 'f00lrhivgoesvo122aejdy7lrzuw0mka',
     authUrl: 'https://account.box.com/api/oauth2/authorize',
-    redirectUri: 'https://your-railway-app.railway.app/api/box/callback', // Update with your Railway URL
-    folderId: '345740672967' // Your Box folder ID
+    redirectUri: 'https://box-upload-backend.onrender.com/api/box/callback',
+    folderId: '345740672967'
   },
   
   // Upload Limits

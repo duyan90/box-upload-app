@@ -1,0 +1,78 @@
+# Git Attributes Configuration
+# Controls how Git handles line endings and file types
+
+# Auto detect text files and normalize line endings
+* text=auto
+
+# Text files
+*.ts text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.xml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.txt text eol=lf
+
+# Shell scripts (must use LF on Unix)
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Windows scripts (must use CRLF)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Configuration files
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.editorconfig text eol=lf
+.prettierrc text eol=lf
+.eslintrc text eol=lf
+tsconfig*.json text eol=lf
+package.json text eol=lf
+package-lock.json text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.tar binary
+
+# Exclude files from export (git archive)
+.gitattributes export-ignore
+.gitignore export-ignore
+.vscode export-ignore
+.idea export-ignore
+.nx export-ignore
+.angular export-ignore
+node_modules export-ignore
+coverage export-ignore
+dist export-ignore
+
+# Mark generated files
+package-lock.json -diff
+yarn.lock -diff
+dist/** -diff
+*.min.js -diff
+*.min.css -diff
+
+# Linguist language detection (for GitHub)
+*.ts linguist-language=TypeScript
+*.spec.ts linguist-language=TypeScript
+*.md linguist-documentation
+docs/** linguist-documentation
+

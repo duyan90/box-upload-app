@@ -1,0 +1,431 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+  <!-- Header with User Info and Logout -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- App Title -->
+        <div class="flex items-center">
+          <h1 class="text-2xl font-bold text-gray-900">Box File Manager</h1>
+        </div>
+        
+        <!-- User Info and Logout -->
+        <div class="flex items-center space-x-4">
+          <!-- User Avatar -->
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
+              {{ getInitials(user?.name || 'User') }}
+            </div>
+            <div class="text-right">
+              <p class="text-sm font-medium text-gray-900">{{ user?.name || 'User' }}</p>
+              <p class="text-xs text-gray-500">Box Account</p>
+            </div>
+          </div>
+          <button
+            (click)="logout()"
+            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
+          >
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    @if (isLoading) {
+      <div class="text-center py-12">
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        <p class="mt-4 text-gray-600">Loading your Box account...</p>
+      </div>
+    } @else if (error) {
+      <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+        <h3 class="text-red-800 font-semibold">Error</h3>
+        <p class="text-red-600">{{ error }}</p>
+        <button
+          (click)="backToLogin()"
+          class="mt-4 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg"
+        >
+          Back to Login
+        </button>
+      </div>
+    } @else if (user) {
+      <div class="max-w-4xl mx-auto">
+        <!-- Upload Section -->
+        <div class="bg-white rounded-lg shadow-lg p-8">
+          <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Upload Files to Box</h2>
+            <p class="text-gray-600">Choose files to upload to your Box account</p>
+          </div>
+
+          <!-- Upload Area -->
+          <div 
+            class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-blue-400 transition-colors duration-200"
+            [class.border-blue-400]="isDragOver"
+            [class.bg-blue-50]="isDragOver"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event)"
+          >
+            <!-- Upload Icon -->
+            <div class="mx-auto w-24 h-24 mb-6">
+              <svg class="w-full h-full text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+              </svg>
+            </div>
+            
+            <!-- Upload Text -->
+            <div class="space-y-2">
+              <p class="text-xl font-medium text-gray-700">
+                Drop files here or 
+                <button 
+                  (click)="fileInput.click()"
+                  class="text-blue-600 hover:text-blue-500 font-medium underline"
+                >
+                  browse
+                </button>
+              </p>
+              <p class="text-sm text-gray-500">
+                Supports: Images, Documents, Videos (Max 100MB per file, up to 5 files)
+              </p>
+            </div>
+
+            <!-- Hidden File Input -->
+            <input
+              #fileInput
+              type="file"
+              multiple
+              (change)="onFileSelected($event)"
+              class="hidden"
+              accept="image/*,.pdf,.doc,.docx,.txt,.mp4,.avi,.mov"
+            >
+          </div>
+
+          <!-- Upload Button -->
+          <div class="mt-8 text-center">
+            <button
+              (click)="fileInput.click()"
+              class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Choose Files
+            </button>
+          </div>
+
+          <!-- Upload Progress Bars -->
+          @if (isUploading) {
+            <div class="mt-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 border border-blue-200">
+              <!-- Overall Progress Header -->
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-3">
+                  <div class="animate-pulse">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-gray-900">Uploading to Box...</p>
+                    <p class="text-xs text-gray-500">{{ selectedFiles.length }} file(s)</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-2xl font-bold text-blue-600">{{ uploadProgress }}%</p>
+                  <p class="text-xs text-gray-500">{{ getProgressStatus() }}</p>
+                </div>
+              </div>
+
+              <!-- Individual File Progress Bars -->
+              <div class="space-y-3">
+                @for (file of selectedFiles; track file.name; let i = $index) {
+                  <div class="bg-white rounded-lg p-3 border border-gray-200">
+                    <!-- File Info -->
+                    <div class="flex items-center justify-between mb-2">
+                      <div class="flex items-center space-x-2">
+                        <!-- Status Icon -->
+                        @if (fileUploadProgress.get(file.name) === 100) {
+                          <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                          </svg>
+                        } @else if (currentUploadingFiles.includes(file.name)) {
+                          <svg class="w-5 h-5 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                        } @else {
+                          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                          </svg>
+                        }
+                        
+                        <!-- File Name -->
+                        <span class="text-sm font-medium text-gray-700 truncate max-w-xs">
+                          {{ file.name }}
+                        </span>
+                      </div>
+                      
+                      <!-- Progress Percentage -->
+                      <div class="flex items-center space-x-2">
+                        <span class="text-xs text-gray-500">{{ formatFileSize(file.size) }}</span>
+                        <span class="text-sm font-semibold" 
+                              [class.text-blue-600]="(fileUploadProgress.get(file.name) || 0) < 100"
+                              [class.text-green-600]="(fileUploadProgress.get(file.name) || 0) === 100">
+                          {{ fileUploadProgress.get(file.name) || 0 }}%
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <!-- Progress Bar for This File -->
+                    <div class="relative w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                      <div 
+                        class="absolute top-0 left-0 h-full rounded-full transition-all duration-300 ease-out"
+                        [class.bg-gradient-to-r]="(fileUploadProgress.get(file.name) || 0) < 100"
+                        [class.from-blue-500]="(fileUploadProgress.get(file.name) || 0) < 100"
+                        [class.to-purple-500]="(fileUploadProgress.get(file.name) || 0) < 100"
+                        [class.bg-green-500]="(fileUploadProgress.get(file.name) || 0) === 100"
+                        [style.width.%]="fileUploadProgress.get(file.name) || 0"
+                      >
+                        <!-- Shimmer effect for uploading files -->
+                        @if (currentUploadingFiles.includes(file.name)) {
+                          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-40 animate-shimmer"></div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+
+              <!-- Overall Progress Bar -->
+              <div class="mt-4 pt-4 border-t border-gray-300">
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-sm font-medium text-gray-700">Overall Progress</span>
+                  <span class="text-sm font-bold text-blue-600">{{ uploadProgress }}%</span>
+                </div>
+                <div class="relative w-full bg-gray-300 rounded-full h-3 overflow-hidden shadow-inner">
+                  <div 
+                    class="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 rounded-full transition-all duration-500 ease-out"
+                    [style.width.%]="uploadProgress"
+                  >
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Selected Files List -->
+          @if (selectedFiles.length > 0) {
+            <div class="mt-8">
+              <h3 class="text-lg font-medium text-gray-900 mb-4">Selected Files ({{ selectedFiles.length }})</h3>
+              <div class="space-y-2">
+                @for (file of selectedFiles; track $index) {
+                  <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                      <div class="flex-shrink-0">
+                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                      </div>
+                      <div>
+                        <p class="text-sm font-medium text-gray-900">{{ file.name }}</p>
+                        <p class="text-xs text-gray-500">{{ formatFileSize(file.size) }}</p>
+                      </div>
+                    </div>
+                    <button
+                      (click)="removeFile($index)"
+                      class="text-red-500 hover:text-red-700 p-1"
+                    >
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                      </svg>
+                    </button>
+                  </div>
+                }
+              </div>
+
+              <!-- Upload Button -->
+              <div class="mt-6 text-center">
+                <button
+                  (click)="uploadFiles()"
+                  [disabled]="isUploading"
+                  class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                >
+                  @if (!isUploading) {
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                  } @else {
+                    <svg class="w-5 h-5 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  }
+                  @if (!isUploading) {
+                    <span>Upload to Box</span>
+                  } @else {
+                    <span>Uploading...</span>
+                  }
+                </button>
+              </div>
+            </div>
+          }
+
+          <!-- Debug Section -->
+          <div class="mt-8 p-4 bg-gray-50 rounded-lg">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Debug Tools</h3>
+            <div class="flex flex-wrap gap-3">
+              <button
+                (click)="testToken()"
+                [disabled]="isUploading"
+                class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm disabled:opacity-50"
+              >
+                Test Token
+              </button>
+              <button
+                (click)="checkFolder()"
+                [disabled]="isUploading"
+                class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md text-sm disabled:opacity-50"
+              >
+                Check Folder
+              </button>
+              <button
+                (click)="manualRefreshToken()"
+                [disabled]="isUploading"
+                class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-md text-sm disabled:opacity-50"
+              >
+                Refresh Token
+              </button>
+            </div>
+          </div>
+
+          <!-- Error Message -->
+          @if (uploadErrorMessage) {
+            <div class="mt-6 p-4 bg-red-50 border border-red-200 rounded-md">
+              <p class="text-sm text-red-600">{{ uploadErrorMessage }}</p>
+            </div>
+          }
+
+          <!-- Success Message -->
+          @if (successMessage) {
+            <div class="mt-6 p-4 bg-green-50 border border-green-200 rounded-md">
+              <p class="text-sm text-green-600" [innerHTML]="successMessage"></p>
+            </div>
+          }
+        </div>
+
+        <!-- Uploaded Files Table -->
+        <div class="mt-8 bg-white rounded-lg shadow-lg overflow-hidden">
+          <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-900">Uploaded Files</h3>
+            <button
+              (click)="loadUploadedFiles()"
+              [disabled]="isLoadingFiles"
+              class="px-3 py-1 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-md disabled:opacity-50"
+            >
+              @if (isLoadingFiles) {
+                <span class="inline-block animate-spin mr-2">⟳</span>
+              }
+              Refresh
+            </button>
+          </div>
+
+          @if (isLoadingFiles) {
+            <div class="p-8 text-center">
+              <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+              <p class="mt-2 text-gray-600">Loading files...</p>
+            </div>
+          } @else if (uploadedFiles.length === 0) {
+            <div class="p-8 text-center text-gray-500">
+              <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+              </svg>
+              <p class="text-lg">No files uploaded yet</p>
+              <p class="text-sm mt-2">Upload files to see them here</p>
+            </div>
+          } @else {
+                <div class="overflow-x-auto">
+                  <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          File Name
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Uploaded By
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Version
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Size
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Last Updated
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                      @for (file of uploadedFiles; track file.id) {
+                        <tr class="hover:bg-gray-50 transition-colors">
+                          <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                              <div class="flex-shrink-0">
+                                <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                              </div>
+                              <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">{{ file.name }}</div>
+                                <div class="text-xs text-gray-500">ID: {{ file.id }}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                              <div class="flex-shrink-0">
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold text-sm">
+                                  {{ getInitials(file.created_by?.name || 'Unknown') }}
+                                </div>
+                              </div>
+                              <div class="ml-3">
+                                <div class="text-sm font-medium text-gray-900">
+                                  {{ file.created_by?.name || 'Unknown' }}
+                                </div>
+                                <div class="text-xs text-gray-500">
+                                  {{ file.created_by?.login || '' }}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                              v{{ getVersionNumber(file) }}
+                            </span>
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ formatFileSize(file.size) }}
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ formatDate(file.modified_at) }}
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+
+            <!-- Table Footer -->
+            <div class="px-6 py-3 bg-gray-50 border-t border-gray-200 text-sm text-gray-500">
+              Total: {{ uploadedFiles.length }} file(s)
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </main>
+</div>
+

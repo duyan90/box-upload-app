@@ -1,96 +1,319 @@
-# MyFullstackApp
+# Box File Upload Application
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+Angular + NestJS fullstack app for uploading files to Box.com with OAuth authentication.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+> 🚀 **First time?** See [QUICK-START.md](./QUICK-START.md) - Setup in 5 minutes!
+> 📚 **All docs:** See [DOCS.md](./DOCS.md)
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+## 🚀 Project Structure
 
-## Run tasks
-
-To run tasks with Nx use:
-
-```sh
-npx nx <target> <project-name>
+```
+my-fullstack-app/
+├── frontend/                # Angular application
+│   ├── src/
+│   │   ├── app/            # Application components
+│   │   ├── styles.css      # Global styles with Tailwind
+│   │   └── main.ts         # Application entry point
+│   └── project.json        # Frontend project configuration
+├── backend/                 # NestJS application
+│   ├── src/
+│   │   └── main.ts         # Backend entry point
+│   └── project.json        # Backend project configuration
+├── tailwind.config.js      # Tailwind CSS configuration
+├── postcss.config.js       # PostCSS configuration
+└── .vscode/
+    └── launch.json         # Debug configuration
 ```
 
-For example:
+## 🛠️ Technologies
 
-```sh
-npx nx build myproject
+### Frontend
+- **Angular 20** - Modern web framework with standalone components
+- **Tailwind CSS** - Utility-first CSS framework
+- **RxJS** - Reactive programming with observables
+- **Jest** - Testing framework
+
+### Backend
+- **NestJS** - Progressive Node.js framework
+- **TypeScript** - Type-safe JavaScript
+- **Express** - HTTP server (under NestJS)
+- **Jest** - Testing framework
+
+## 📦 Installation
+
+```bash
+# Install dependencies
+npm install
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+## 🚀 Running the Application
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+> 💡 **Quick Start:** See [QUICK-START.md](./QUICK-START.md) for detailed guide
 
-## Add new projects
+### Option 1: Run Everything (Recommended) ⚡
 
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-To install a new plugin you can use the `nx add` command. Here's an example of adding the React plugin:
-```sh
-npx nx add @nx/react
+```bash
+npm start
 ```
 
-Use the plugin's generator to create new projects. For example, to create a new React app or library:
+This starts both frontend (port 4200) and backend (port 3000) in parallel.
 
-```sh
-# Generate an app
-npx nx g @nx/react:app demo
+### Option 2: Run Individually
 
-# Generate a library
-npx nx g @nx/react:lib some-lib
+```bash
+# Backend only
+npm run start:backend   # or npm run start:api
+
+# Frontend only  
+npm run start:frontend  # or npm run start:web
 ```
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+### Option 3: Using Nx Directly
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```bash
+# Development mode - Frontend
+npx nx serve frontend
+# → Available at http://localhost:4200
 
-## Set up CI!
+# Development mode - Backend
+npx nx serve backend
+# → Available at http://localhost:3000/api
 
-### Step 1
-
-To connect to Nx Cloud, run the following command:
-
-```sh
-npx nx connect
+# Run both in parallel
+npx nx run-many -t serve -p frontend backend --parallel
 ```
 
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
+## 🐛 Debugging the NestJS Backend
 
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+The project includes a pre-configured debug setup for VS Code.
 
-### Step 2
+### Debug Steps:
 
-Use the following command to configure a CI workflow for your workspace:
+1. Open the project in VS Code
+2. Go to the Debug panel (Ctrl+Shift+D or Cmd+Shift+D)
+3. Select **"Debug NestJS Backend"** from the dropdown
+4. Press F5 or click the green play button
 
-```sh
-npx nx g ci-workflow
+The debugger will:
+- Start the NestJS backend server with Webpack watch mode
+- Attach the debugger on port 9229
+- Allow you to set breakpoints in your TypeScript code
+- Show variables and call stacks during execution
+- Hot reload on file changes
+
+### Setting Breakpoints:
+
+1. Open any `.ts` file in the `backend/src` directory
+2. Click on the left margin (line number area) to set a breakpoint (red dot)
+3. The debugger will pause execution when that line is reached
+4. Use the debug toolbar to step through code, inspect variables, etc.
+
+### Debug Console:
+
+You can also use the Debug Console to evaluate expressions and run commands while debugging.
+
+## 🎨 Tailwind CSS
+
+This project uses **Tailwind CSS v3** for styling.
+
+### Quick Start:
+Simply use Tailwind classes in your Angular templates:
+
+```html
+<div class="bg-blue-500 text-white p-4 rounded-lg shadow-lg hover:shadow-xl">
+  Hello Tailwind!
+</div>
 ```
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### Configuration Files:
+- `postcss.config.js` - PostCSS configuration with Tailwind
+- `tailwind.config.js` - Theme and content configuration
+- `frontend/src/styles.css` - Tailwind directives
 
-## Install Nx Console
+## 📁 Project Commands
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+### Build
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```bash
+# Build all
+npm run build
 
-## Useful links
+# Build individually
+npm run build:frontend
+npm run build:backend
 
-Learn more:
+# Using Nx directly
+npx nx build frontend
+npx nx build backend
+npx nx run-many -t build
+```
 
-- [Learn more about this workspace setup](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### Test
 
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```bash
+# Test all
+npm test
+
+# Test individually
+npm run test:frontend
+npm run test:backend
+
+# Using Nx directly
+npx nx test frontend
+npx nx test backend
+npx nx run-many -t test
+```
+
+### Lint
+
+```bash
+# Lint all
+npm run lint
+
+# Lint individually
+npm run lint:frontend
+npm run lint:backend
+
+# Using Nx directly
+npx nx lint frontend
+npx nx lint backend
+npx nx run-many -t lint
+```
+
+### Format Code
+
+```bash
+# Format all code
+npm run format
+
+# Check formatting
+npm run format:check
+```
+
+## 🌐 API Endpoints
+
+The NestJS backend provides the following REST API endpoints (all prefixed with `/api`):
+
+- `GET /api` - Health check endpoint
+  - Returns: `{ message: "Hello API" }`
+
+- `GET /api/users` - Get list of users
+  - Returns: `{ users: [{ id, name, email }] }`
+
+### NestJS Architecture:
+
+The backend follows NestJS best practices:
+- **Controllers** (`backend/src/app/app.controller.ts`) - Handle HTTP requests
+- **Services** (`backend/src/app/app.service.ts`) - Business logic
+- **Modules** (`backend/src/app/app.module.ts`) - Organize application structure
+
+## 🔌 Frontend-Backend Communication
+
+The frontend communicates with the backend using:
+
+1. **Proxy Configuration** - `frontend/proxy.conf.json` routes `/api/*` to backend
+2. **CORS Enabled** - Backend allows all origins during development
+3. **API Service** - Centralized HTTP client in `frontend/src/app/services/api.service.ts`
+4. **Type-Safe** - TypeScript interfaces for requests/responses
+
+Example:
+```typescript
+// Using the API service
+this.apiService.getUsers()
+  .subscribe(response => {
+    this.users = response.users;
+  });
+```
+
+Benefits:
+- ✅ No CORS issues in development
+- ✅ Clean relative URLs (`/api/users`)
+- ✅ Environment-independent code
+
+## 📊 Nx Graph
+
+View the project dependency graph:
+
+```bash
+npx nx graph
+```
+
+This will open an interactive visualization of your workspace structure.
+
+## 🚀 Production Build
+
+```bash
+# Build both apps for production
+npx nx run-many -t build --configuration=production
+
+# Output will be in:
+# - dist/frontend/browser (frontend static files)
+# - dist/backend (backend Node.js application)
+```
+
+## 📝 Notes
+
+- The frontend runs on port **4200** by default
+- The backend runs on port **3000** by default
+- Make sure both applications are running to test the full functionality
+- The "Load Users from Backend" button in the frontend will fetch data from the backend
+
+## 🔧 Troubleshooting
+
+### Port Already in Use
+
+If you get an error that a port is already in use, you can:
+
+1. Stop the process using that port
+2. Or change the port in the project configuration:
+   - Frontend: `frontend/project.json`
+   - Backend: Set `PORT` environment variable
+
+### Tailwind Styles Not Loading
+
+Make sure you have:
+1. Run `npm install` to install all dependencies
+2. The `styles.css` includes the Tailwind directives
+3. The `tailwind.config.js` has the correct content paths
+
+## 📚 Documentation & Guides
+
+### Project Guides
+- **[Start Here](./START-HERE.md)** - 2-minute quick setup for new developers
+- **[Quick Start Guide](./QUICK-START.md)** - Get up and running quickly
+- **[Commands Cheat Sheet](./COMMANDS-CHEATSHEET.md)** - Quick reference for all commands
+- **[Troubleshooting](./TROUBLESHOOTING.md)** - Common issues and solutions 🔥
+- **[Project Structure](./PROJECT-STRUCTURE.md)** - Understanding the codebase organization
+
+### Official Documentation
+- [Nx Documentation](https://nx.dev)
+- [Angular Documentation](https://angular.dev)
+- [NestJS Documentation](https://nestjs.com)
+- [Tailwind CSS Documentation](https://tailwindcss.com)
+
+## 🎯 Next Steps
+
+- Add authentication to the backend (Passport, JWT)
+- Create more NestJS modules and services
+- Add database integration (TypeORM, Prisma with PostgreSQL/MongoDB)
+- Add routing to the frontend
+- Implement state management (NgRx, Signals)
+- Add validation pipes and DTOs
+- Write unit and e2e tests
+- Add API documentation (Swagger)
+- Deploy to production
+
+## 🏗️ NestJS Features
+
+NestJS provides many built-in features:
+
+- **Dependency Injection** - Clean and testable code
+- **Decorators** - `@Controller`, `@Get`, `@Post`, `@Injectable`, etc.
+- **Middleware** - Request/response processing
+- **Guards** - Authentication and authorization
+- **Interceptors** - Transform responses, handle errors
+- **Pipes** - Validation and transformation
+- **WebSockets** - Real-time communication
+- **Microservices** - Scalable architecture
+
+Happy coding! 🎉

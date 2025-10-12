@@ -1,0 +1,117 @@
+# Project Rules
+
+## Language Preferences
+
+### Documentation Language
+- ALL documentation must be written in **English**
+- This includes:
+  - README.md files
+  - Documentation files (*.md)
+  - Code comments
+  - API documentation
+  - Configuration file comments
+  - JSDoc/TSDoc comments
+  - Inline code explanations
+
+### Communication
+- User communication can be in Vietnamese
+- But all written documentation and code comments must be in English
+
+## Code Standards
+
+### TypeScript
+- Use strict type checking
+- Prefer interfaces over types where possible
+- Document complex functions with JSDoc comments
+- Use meaningful variable and function names
+
+### Angular
+- Follow Angular style guide
+- Use standalone components
+- Prefer signals for state management (Angular 16+)
+- Use OnPush change detection where appropriate
+
+### NestJS
+- Follow NestJS best practices
+- Use dependency injection
+- Separate business logic into services
+- Use DTOs for data transfer
+- Implement proper error handling
+
+### Nx
+- Keep projects independent
+- Use Nx generators for consistency
+- Leverage workspace libraries for shared code
+- Configure appropriate caching strategies
+
+## File Organization
+
+### Frontend (Angular)
+```
+frontend/
+├── src/
+│   ├── app/
+│   │   ├── components/     # Reusable components
+│   │   ├── services/       # Business logic services
+│   │   ├── models/         # TypeScript interfaces/types
+│   │   └── utils/          # Utility functions
+│   ├── assets/             # Static assets
+│   └── styles.css          # Global styles (Tailwind)
+```
+
+### Backend (NestJS)
+```
+backend/
+├── src/
+│   ├── app/
+│   │   ├── *.controller.ts # HTTP controllers
+│   │   ├── *.service.ts    # Business logic
+│   │   ├── *.module.ts     # Module definitions
+│   │   └── dto/            # Data Transfer Objects
+│   └── main.ts             # Application entry point
+```
+
+## Git Commit Messages
+- Use English for all commit messages
+- Follow conventional commits format:
+  - `feat:` New features
+  - `fix:` Bug fixes
+  - `docs:` Documentation changes
+  - `style:` Code style changes
+  - `refactor:` Code refactoring
+  - `test:` Test additions/changes
+  - `chore:` Build process or auxiliary tool changes
+
+## Testing
+- Write tests in English
+- Use descriptive test names
+- Follow AAA pattern (Arrange, Act, Assert)
+- Aim for meaningful coverage, not just numbers
+
+## Documentation Requirements
+
+### When creating new features:
+1. Update README.md if necessary
+2. Add JSDoc/TSDoc comments for public APIs
+3. Document environment variables
+4. Create migration guides for breaking changes
+5. Keep API documentation up to date
+
+### Comment Style:
+```typescript
+// Good: Clear, concise English comments
+/**
+ * Fetches user data from the backend API
+ * @param userId - The unique identifier of the user
+ * @returns Promise containing user data
+ */
+async function fetchUser(userId: string): Promise<User> {
+  // Implementation
+}
+
+// Bad: Vietnamese comments
+// Lấy dữ liệu người dùng từ API
+```
+
+Remember: Code is read more often than it's written. Make it clear and professional with English documentation.
+
